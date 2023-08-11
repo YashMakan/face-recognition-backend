@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>WebSocket</title>
+</head>
+<body>
+    <script>
+        const socket = new WebSocket(`ws://${window.location.host}/ws`);
+
+        socket.onopen = (event) => {
+            console.log('WebSocket connection opened');
+        };
+
+        socket.onmessage = (event) => {
+            const response = JSON.parse(event.data);
+            console.log(response);
+
+            // You can display the result on the page or handle it as needed
+        };
+
+        socket.onclose = (event) => {
+            console.log('WebSocket connection closed');
+        };
+
+        document.querySelector('form').addEventListener('submit', (event) => {
+            event.preventDefault();
+            const formData = new FormData(event.target);
+            const imageFile = formData.get('image');
+
+            if (imageFile) {
+                const reader = new FileReader();
+                reader.onload = (readerEvent) => {
+                    socket.send(readerEvent.target.result);
+                };
+                reader.readAsArrayBuffer(imageFile);
+            }
+        });
+    </script>
+</body>
+</html>
